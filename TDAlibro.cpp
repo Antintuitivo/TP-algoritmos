@@ -39,7 +39,7 @@ char leerCaracterLibro(Libro &arch){
 	return c;
 }
 
-void LeerPalabraLibro(Libro arch, char cad[], int tl=20){
+void leerPalabraLibro(Libro &arch, char cad[], int tl){
 	arch.arc.getline(cad, tl,' ');
 	int p;
 	for(int i=0;i<tl;i++){

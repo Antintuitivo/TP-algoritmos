@@ -6,14 +6,13 @@ using namespace std;
 
 struct Libro{
 	ifstream arc;
-	
 };
 
-void cerrarLibro(Libro arch);
-bool abrirLibro(Libro arch,char modo, string nombre);
+void cerrarLibro(Libro &arch);
+bool abrirLibro(Libro &arch, char modo, string nombre);
 Libro crearLibro();
-char leerCaracterLibro(Libro arch);
-void LeerPalabraLibro(Libro arch, char cad[]);
+char leerCaracterLibro(Libro &arch);
+void leerPalabraLibro(Libro &arch, char cad[], int tl=20);
 
 
 	

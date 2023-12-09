@@ -93,11 +93,11 @@ path=Pantalla de carga.cpp
 cursor=50:13
 [source]
 path=TDAlibro.cpp
-cursor=39:1
+cursor=41:53
 open=true
 [source]
 path=ListasEnlazadas.cpp
-cursor=3:0
+cursor=51:0
 open=true
 [header]
 path=archivo.h
@@ -119,7 +119,7 @@ path=memoria.h
 cursor=10:4
 [header]
 path=TDAlibro.h
-cursor=11:23
+cursor=7:14
 open=true
 [config]
 name=Debug
