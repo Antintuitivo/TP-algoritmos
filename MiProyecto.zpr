@@ -97,7 +97,7 @@ cursor=41:53
 open=true
 [source]
 path=ListasEnlazadas.cpp
-cursor=51:0
+cursor=26:9
 open=true
 [header]
 path=archivo.h

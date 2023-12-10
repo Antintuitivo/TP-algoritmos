@@ -6,12 +6,28 @@ using namespace std;
 
 struct Nodo{
 	char palabra[30];
-	int rep=0,tl=0;
+	int rep=0;
 	Nodo *sig=NULL;
 };
 
 typedef Nodo * Lista;
 typedef Nodo * ptrNodo;
+
+void palabraAMinuscula(char pal[]){
+	int f=strlen(pal);
+	for(int i=0;i<f;i++){
+		if(isalpha(pal[i]))
+			pal[i]=tolower(pal[i]);
+	}
+}
+
+Lista crearLista(char pal[]){
+	Lista l;
+	l=new Nodo;
+	strcpy(l->palabra, pal);
+	l->rep=1;
+	return l;
+}
 
 bool aniadirNodo(char pal[], Lista l){
 	ptrNodo	aux, nuevo;
@@ -27,7 +43,6 @@ bool aniadirNodo(char pal[], Lista l){
 		
 		aux->sig=NULL;
 		strcpy(aux->palabra, pal);
-		aux->tl=strlen(pal);
 		aux->rep=1;
 		b=true;
 	}else{
@@ -56,7 +71,7 @@ float longitudPromedio(Lista l){
 	ptrNodo ptr=l;
 	if(ptr->sig!=NULL){
 		do{
-			total+=ptr->tl;
+			total+=((strlen(ptr->palabra))*(ptr->rep));
 			cant+=ptr->rep;
 			ptr=ptr->sig;
 		}while(ptr->sig!=NULL);
