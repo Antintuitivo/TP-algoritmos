@@ -48,9 +48,8 @@ void pantallaCarga() {
 	int filUTN=4, colUTN=27, centrarUTN=((colUTN/2)-50)*(-1);
 	cout<<endl<<endl;
 	mostrarDibujo (filUTN, colUTN, centrarUTN, utn);
-	Sleep(1500);
-	system("color 0B");
 	Sleep(1000);
+	system("color 0B");
 }
 void mostrarDibujo (int filas, int columnas, int centrar, char dibujo[][TAM]){
 	HANDLE  hConsole;
