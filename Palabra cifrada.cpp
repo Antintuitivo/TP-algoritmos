@@ -38,7 +38,7 @@ char palabraCifrada(string palabras[]){
 	int tl=tam*4+1; //tamanio final del grafico de la matriz
 	cargarPalabraCodificada(matrizCifrada, palabra_cod, tam);
 	
-	int cantIntentos=2*tam, k=0;//k es la cantidad de intentos acumulados
+	int cantIntentos=tam+7, k=0;//k es la cantidad de intentos acumulados
 	bool correctas[15]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, gano=false;
 	char letra[20], letrasIngresadas[20];
 	vectorDeIntentos(letrasIngresadas, 20);

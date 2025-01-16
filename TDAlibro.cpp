@@ -12,7 +12,7 @@ bool confirmarLibro(Libro &arch){//confirma si se abrió correctamente
 	return !arch.arc.fail();
 }
 	
-bool abrirLibro(Libro arch, char modo, string nombre){//abre el archivo para leer o escribir según el modo elegido
+bool abrirLibro(Libro &arch, char modo, string nombre){//abre el archivo para leer o escribir según el modo elegido
 
 	switch(modo){
 	case 'l'://leer
@@ -39,16 +39,27 @@ char leerCaracterLibro(Libro &arch){
 	return c;
 }
 
-void leerPalabraLibro(Libro &arch, char cad[], int tl){
-	arch.arc.getline(cad, tl,' ');
-	int p;
-	for(int i=0;i<tl;i++){
-		if((!isalpha(cad[i]))&&cad[i]!='-'&&cad[i]!='\''){
-			p=i;
-			while(p<tl-1){
-				cad[p]=cad[p+1];
-			}
-			tl--;
-		}
-	}
+string leerPalabraLibro(Libro &arch){
+	string cad;
+	getline(arch.arc,cad);
+	return cad;
+	
+}
+
+void escribirPalabraLibro(Libro &arch, char cad[]){
+	arch.arc<<cad;
+}
+
+bool finLibro(Libro &arch){
+	return arch.arc.eof();
+}
+
+void escribirString(Libro &arch,string frase){
+	arch.arc<<frase;
+}
+void escribirChar(Libro &arch,char caracter){
+	arch.arc<<caracter;
+}
+void escribirNum(Libro &arch,long long num){
+	arch.arc<<num;
 }

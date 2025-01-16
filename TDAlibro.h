@@ -5,15 +5,20 @@
 using namespace std;
 
 struct Libro{
-	ifstream arc;
+	fstream arc;
 };
 
 void cerrarLibro(Libro &arch);
 bool abrirLibro(Libro &arch, char modo, string nombre);
 Libro crearLibro();
 char leerCaracterLibro(Libro &arch);
-void leerPalabraLibro(Libro &arch, char cad[], int tl=20);
-
-
+string leerPalabraLibro(Libro &arch);
+void escribirPalabraLibro(Libro &arch, char cad[]);
+void escribirNumeroLibro(Libro &arch, long long num);
+bool finLibro(Libro &arch);
+bool confirmarLibro(Libro &arch);
+void escribirNum(Libro &arch,long long num);
+void escribirChar(Libro &arch,char caracter);
+void escribirString(Libro &arch,string frase);
 	
 #endif

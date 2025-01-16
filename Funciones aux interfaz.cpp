@@ -97,8 +97,11 @@ void alertaDeError (char letra[], char letrasIngresadas[], int k,int y){
 		for(int i=0;i<(int)strlen(letra);i++) cout<<" ";
 		for(int i=0;i<(int)strlen(letra);i++) cout<<'\b';
 		gets(letra);
-		if(esUnDigito(letra))letra[0]=tolower(letra[0]);
-		if (!isalpha(letra[0]) or !(esUnDigito(letra)))
+		if(esUnDigito(letra)){
+			if(letra[0]==(-92) or letra[0]==(-91))letra[0]=(-92);
+			else letra[0]=tolower(letra[0]);
+		}
+		if (!((isalpha(letra[0])) or (letra[0]==(-92))) or !(esUnDigito(letra)))
 		{
 			gotoxy(0,y);
 			SetConsoleTextAttribute(hConsole, 4);
@@ -107,7 +110,7 @@ void alertaDeError (char letra[], char letrasIngresadas[], int k,int y){
 		}else{
 			repetido=esRepetido(letrasIngresadas,letra[0],k,y);
 		}
-	}while(!isalpha(letra[0]) || repetido or !(esUnDigito(letra)));
+	}while(!((isalpha(letra[0])) or (letra[0]==(-92))) || repetido or !(esUnDigito(letra)));
 }
 void escribirPalabrasEspeciales (int palabra){
 	switch(palabra){

@@ -7,6 +7,8 @@
 #include <cmath>
 #include <cctype>
 #include <ctime>
+#include "ListasEnlazadas.h"
+#include "menuEstadisticasPalabras.h"
 
 using namespace std;
 
@@ -30,6 +32,9 @@ char memoria(string []);
 char ahorcado(string []);
 char palabraCifrada(string []);
 void pantallaCarga();
+char menuProcesadorTexto();
+bool contarCaracteres();
+char menuEstadisticasPalabras();
 
 //Funciones
 
@@ -37,12 +42,13 @@ int main(int argc, char *argv[]) {
 	srand(time(NULL));//semilla para los juegos que usan la funcion rand()
 	system("mode con: cols=100 lines=40");//Definimos el tamanio de la consola
 	pantallaCarga();
+	Lista l=abrirEstadisticasPalabras();
 	system("cls");
 	system("color 0B");//Definimos el color de fondo y de texto
 	bienvenida(); //Ejecuta la pagina de inicio
 	char eleccion;
 	if(login()){//Llama a la funcion login, de validarse el usuario continua con el menu principal
-		bool volver,repetirMenu;
+		bool volver,repetirMenu,repetirMenu2;
 		string palabras[100];
 		extraerPalabrasDeArchivo(palabras);
 		do{
@@ -100,6 +106,32 @@ int main(int argc, char *argv[]) {
 							if(eleccion=='1')volverAJugar=true;
 							else repetirMenu=true;
 						} while(volverAJugar);
+					}break;
+					case 'X':volver=true;break;
+					}
+				}while(repetirMenu);
+			}break;
+			case '3':{
+				do{
+					repetirMenu=false;
+					eleccion=menuProcesadorTexto();
+					switch(eleccion){
+					case '1':repetirMenu=contarCaracteres();break;
+					case '2':{
+						do{
+							system("mode con: cols=100 lines=40");//Definimos el tamanio de la consola
+							repetirMenu2=false;
+							repetirMenu=false;
+							eleccion=menuEstadisticasPalabras();
+							switch(eleccion){
+							case '1': repetirMenu2=menuLongitudPromedio(l); break;
+							case '2': repetirMenu2=menuLetraInicial(l); break;
+							case '3': repetirMenu2=menuPorcentajePalabras(l); break;
+							case '4': repetirMenu2=escribirArchvo(l); break;
+							case '5': repetirMenu2=menuPalabrasLongCharEspecif(l); break;
+							case 'X': repetirMenu=true; break;
+							}
+						}while(repetirMenu2);
 					}break;
 					case 'X':volver=true;break;
 					}

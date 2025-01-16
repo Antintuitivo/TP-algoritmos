@@ -8,16 +8,26 @@
 #include <cctype>
 #include <cstring>
 #include <cstdio>
+#include <fstream>
+#include "func_aux.h"
+#include <ctime>
 using namespace std;
 
-//Funciones
-
-bool validarContra(char [],char []);
-void invertir(char [],char []);
+struct Fecha{
+	int tm_mday;
+	int tm_mon;
+	int tm_year;
+};
+struct Persona{
+	char nombre[20], apellido[20], legajo[6], contra[6];
+	char sexo, rol;
+	char date[11];
+};
 bool ingresoCorrecto(const char x[]);
 void leerContrasena(char password[], int tam);
-
-//Funciones
+void actualizarFechaDeUltimaVez(int pos, bool & valido);
+void TomarFecha(char nuevaFecha[]);
+	//Funciones
 
 bool login(){//Devuelve la validacion del ingreso
 	bool valido=true;
@@ -26,35 +36,72 @@ bool login(){//Devuelve la validacion del ingreso
 	system("cls");
 	char legajo[100];
 	char contra[100];
+	int pos=-1;//posicion del usuario
+	Persona usuario;
+	ifstream f;
 	fflush(stdin);
+	f.open("Usuarios.bin");
+	if(f.fail()){
+		system("cls");
+		for(int i=0;i<18;i++) cout<<endl;
+		for(int i=0;i<30;i++) cout<<" ";
+		SetConsoleTextAttribute(hConsole, 4);
+		cout<<"ERROR AL ABRIR ARCHIVO DE USUARIOS"<<endl;
+		for(int i=0;i<15;i++) cout<<endl;
+		SetConsoleTextAttribute(hConsole, 11);
+		Sleep(3000);
+		valido=false;//Si no se puede abrir el archivo finaliza el programa
+	}else{
+		bool existe=false;
+		
 	do{
 		cout<<"Ingrese su id de usuario: ";
 		gets(legajo);
-		if(!(ingresoCorrecto(legajo)) or (ingresoCorrecto(legajo) and (legajo[0]<'1' or legajo[0]>'8'))){
+		//si ingresa ENTER o un legajo incorrecto se imprime el mensaje
+		if(legajo[0]==0 or !(ingresoCorrecto(legajo)) or (ingresoCorrecto(legajo) and (legajo[0]<'1' or legajo[0]>'8'))){
 			system("cls");
 			SetConsoleTextAttribute(hConsole, 4);//Muestra mensaje de error en rojo si el ingreso es invalido
-			cout<<"Id incorrecto, ingrese su Nro de legajo."<<endl;
+			cout<<"LEGAJO INCORRECTO! El legajo es incorrecto"<<endl;
 			SetConsoleTextAttribute(hConsole, 11);
+		}else{
+			do{
+				f.read((char*)(&usuario), sizeof(usuario));
+				if(!strcmp(usuario.legajo,legajo))//strcmp() devuelve 0 si son = y un numero mayor o menor si son diferentes
+					existe=true;
+				pos++;//va contando el numero del bloque del usuario;
+			} while(!existe and !f.eof());
+			
+			if(!existe){
+				system("cls");
+				SetConsoleTextAttribute(hConsole, 4);//Muestra mensaje de error en rojo si el ingreso es invalido
+				cout<<"LEGAJO INCORRECTO! El legajo no existe"<<endl;
+				SetConsoleTextAttribute(hConsole, 11);
+			}
 		}
-	}while(!(ingresoCorrecto(legajo)) or (ingresoCorrecto(legajo) and (legajo[0]<'1' or legajo[0]>'8')));
+	}while(legajo[0]==0 or !(ingresoCorrecto(legajo)) or (ingresoCorrecto(legajo) and (legajo[0]<'1' or legajo[0]>'8')) or !existe);
 	int intentos=0, contador=0;
+	bool acceso;
+	
 	do{//Pide el ingreso de contrasenia hasta que sea valido o hasta que se alcancen los 3 intentos incorrectos
 		if(contador==0){
 			system("cls");
-			cout<<"Ingrese su id de usuario: ";puts(legajo);
+			cout<<"Ingrese su id de usuario: ";
+			puts(legajo);
 		}
 		cout<<"Ingrese su contrase"<<(char)164<<"a: ";
 		leerContrasena(contra,100);
+		acceso=(!strcmp(usuario.contra, contra));//devuelve cero si las cadenas son iguales
 		intentos++;
-		if(intentos==3 and !(validarContra(contra,legajo))){
+		if(intentos==3 and !acceso){
 			system("cls");
 			for(int i=0;i<15;i++) cout<<endl;
 			for(int i=0;i<20;i++) cout<<" ";
 			cout<<"Exediste el limite de intentos permitidos, vuelve mas tarde."<<endl;
+			for(int i=0;i<15;i++) cout<<endl;
 			Sleep(2000);
 			valido=false;//Si alcanza los 3 intentos incorrectos, no valida el ingreso a la app
 		}
-		else if(!(validarContra(contra,legajo))){
+		else if(!acceso){
 			system("cls");
 			cout<<"Ingrese su id de usuario: ";puts(legajo);
 			SetConsoleTextAttribute(hConsole, 4);
@@ -62,7 +109,24 @@ bool login(){//Devuelve la validacion del ingreso
 			SetConsoleTextAttribute(hConsole, 11);
 			contador++;
 		}
-	}while(!(validarContra(contra,legajo)) and intentos<3);
+	}while((!acceso) and intentos<3);
+	}
+	f.close();
+	
+	if(valido){
+		system("cls");
+		gotoxy(20,17); for(int i=0;i<60;i++) cout<<"-";
+		gotoxy(20,18);cout<<"|      ";
+		if(usuario.sexo=='F')cout<<"Bienvenida  ";
+		else cout<<"Bienvenido  ";
+		cout<<usuario.nombre<<" !";
+		gotoxy(79,18);cout<<"|";
+		gotoxy(20,19); cout<<"|";for(int i=0;i<58;i++)cout<<" ";cout<<"|";
+		gotoxy(20,20);cout<<"|      Ultimo acceso a la aplicacion: "<<usuario.date<<" :)        |";
+		gotoxy(20,21); for(int i=0;i<60;i++) cout<<"-";
+		Sleep(4000);
+	actualizarFechaDeUltimaVez(pos, valido);
+	}
 	
 	return valido;
 }
@@ -107,39 +171,44 @@ bool ingresoCorrecto(const char x[]){//valida que la cadena ingresada sea una de
 	}
 	return aprobado;
 }
-bool validarContra(char x[],char legajo[]){//Evalua si la contrasenia ingresada cumple con la regla establecida
-	bool ok=true;
-	int largoContra=strlen(x),largoDeLegajo=strlen(legajo);
-	if(largoContra!=largoDeLegajo)ok=false;
-	else{
-		char contra[10];
-		invertir(legajo,contra);
-		char agregar[2];
-		if(((legajo[0]-'0')+(legajo[largoDeLegajo-1]-'0'))>9)agregar[0]=(((legajo[0]-'0')+(legajo[largoDeLegajo-1]-'0')-10)+'0');
-		else agregar[0]=((legajo[0]-'0')+(legajo[largoDeLegajo-1]-'0')+'0');
-		agregar[1]='\0';
-		strcat(contra,agregar);
-		int largo=strlen(contra);
-		int i=0;
-		while(ok and i<largo){
-			if(x[i]!=contra[i])ok=false;
-			i++;
-		}
-	}
-	return ok;
-}
-
 	
-void invertir(char legajo[],char salida[]){//Invierte numero entero y lo convierte en una cadena de caracteres
-	int i=0;
-	int cantDig=strlen(legajo);
-	cantDig-=1;
-	while(cantDig>0){
-		salida[i]=legajo[cantDig];
-		cantDig--;
-		i++;
-	}
-	salida[i]='\0';
-	return;
-}
+void actualizarFechaDeUltimaVez(int pos, bool & valido){
+	char nuevaFecha[11];
+	TomarFecha(nuevaFecha);
 	
+	fstream file;
+	file.open("Usuarios.bin",ios::binary|ios::in|ios::out);
+	if(file.fail()) {
+		cout<<"Error al abrir el archivo binario."<<endl;
+	}else{
+		pos=sizeof(Persona)*pos;
+		file.seekg(pos, ios::beg);
+		// Leer la información existente de la persona
+		Persona usuario;
+		file.read((char*)(&usuario), sizeof(Persona));
+		strcpy(usuario.date, nuevaFecha);
+		file.seekp(pos, ios::beg);
+		file.write((char*)(&usuario), sizeof(Persona));
+		file.close();
+	}
+}
+void TomarFecha(char nuevaFecha[]){
+	time_t ahora;
+	struct tm *fecha;
+	time(&ahora);
+	fecha = localtime(&ahora);
+	fecha->tm_mon++;
+	fecha->tm_year+=1900;
+	
+	nuevaFecha[0]='0'+(fecha->tm_mday/10);
+	nuevaFecha[1]='0'+(fecha->tm_mday%10);
+	nuevaFecha[2]='/';
+	nuevaFecha[3]='0'+(fecha->tm_mon/10);
+	nuevaFecha[4]='0'+(fecha->tm_mon%10);
+	nuevaFecha[5]='/';
+	nuevaFecha[6]='0'+(fecha->tm_year/1000);
+	nuevaFecha[7]='0'+((fecha->tm_year/100)%10);
+	nuevaFecha[8]='0'+((fecha->tm_year/10)%10);
+	nuevaFecha[9]='0'+(fecha->tm_year%10);
+	nuevaFecha[10]='\0';
+}
